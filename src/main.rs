@@ -1,6 +1,5 @@
 use std::{error::Error, io::Write, path::PathBuf};
 
-// use reqwest::{self, header::HeaderMap};
 use chrono::{self, Datelike};
 use clap::{App, Arg};
 use ureq::AgentBuilder;
@@ -153,6 +152,8 @@ fn save_cookie(cookie: &str) {
     config_file.push("cookie");
     // println!("{:?}", config_file);
     let mut file = std::fs::File::create(config_file).unwrap();
+    let mut perms = file.metadata().unwrap().permissions();
+    file.set_permissions(perms).unwrap();
     file.write_all(cookie.as_bytes()).unwrap();
     println!("Cookie stored.");
 }
