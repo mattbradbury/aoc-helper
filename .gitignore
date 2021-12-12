@@ -1,0 +1,4 @@
+/target
+/input
+src/point.rs
+Cargo.lock
