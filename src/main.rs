@@ -1,6 +1,7 @@
-use std::{io::Write, path::PathBuf};
+use std::{io::Write, path::PathBuf, error::Error};
 
-use reqwest::{self, header::HeaderMap};
+// use reqwest::{self, header::HeaderMap};
+use ureq::{Agent, AgentBuilder};
 use clap::{Arg, App};
 use dirs;
 use chrono::{self, Datelike};
@@ -114,7 +115,7 @@ fn get_cookie(config_dir: PathBuf) -> String {
 }
 
 fn is_day(day: String) -> Result<(),String> {
-    let day:u32 = day.parse().map_err(|_| "Must be a number".to_owned())?;
+    let day:u32 = day.parse().map_err(|_| format!("{} Must be a number", day).to_owned())?;
     if day < 1 || day > 25 { return Err("Day must be between 1 and 25".to_owned()) }
     Ok(())
 }
@@ -154,25 +155,18 @@ fn download_day(props: &Props) -> String {
 
 }
 
-fn make_request(props: &Props) -> Result<String, String> {
+fn make_request(props: &Props) -> Result<String, Box<dyn Error>> {
 
 
-    let mut headers = HeaderMap::new();
-    headers.insert("cookie", format!("session={}", &props.cookie).parse().unwrap());
+    // let mut headers = HeaderMap::new();
+    let header = format!("session={}", &props.cookie);
 
-    let client = reqwest::blocking::Client::builder()
-        .default_headers(headers).build().unwrap();
+    let client = AgentBuilder::new().build();
+        // .default_headers(headers).build().unwrap();
     
     let url = format!("https://adventofcode.com/{}/day/{}/input", &props.year, &props.day);
     
     println!("Connecting to: {}", url);
     
-    let resp = match client.get(url).send() {
-        Ok(resp) => resp,
-        Err(e) => return Err(e.to_string())
-    };
-    match resp.error_for_status() {
-        Ok(resp) => Ok(resp.text().unwrap()),
-        Err(err) => Err(err.to_string()),
-    }
+    Ok(client.get(&url).set("cookie", &header).call()?.into_string()?)
 }
