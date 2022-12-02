@@ -180,7 +180,7 @@ fn download_day(props: &Props) -> String {
 fn make_request(props: &Props) -> Result<String, Box<dyn Error>> {
     let header = format!("session={}", &props.cookie);
 
-    let client = AgentBuilder::new().build();
+    let client = AgentBuilder::new().user_agent("aoc-helper 0.1 matt@bexars.com").build();
 
     let url = format!(
         "https://adventofcode.com/{}/day/{}/input",
