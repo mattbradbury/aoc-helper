@@ -159,7 +159,8 @@ fn save_cookie(cookie: &str) {
 }
 
 fn get_day_year() -> (String, String) {
-    let offset = chrono::FixedOffset::west(5 * 3600); // EST (UTC -0500) which is AoC server TZ
+    // UNWRAP because it's a constant known good value
+    let offset = chrono::FixedOffset::west_opt(5 * 3600).unwrap(); // EST (UTC -0500) which is AoC server TZ
     let time = chrono::Utc::now().with_timezone(&offset);
     (time.day().to_string(), time.year().to_string())
 }
