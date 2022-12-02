@@ -26,7 +26,7 @@ fn main() {
     config_dir.push("aoc");
 
     let matches = App::new("Advent of Code Input Retriever")
-        .version("0.1")
+        .version("0.1.1")
         .author("Matt Bradbury <matt@bexars.com>")
         .after_help(HELP_EXTRA)
         .arg(
